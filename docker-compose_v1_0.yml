@@ -1,0 +1,30 @@
+version: '3'
+
+services: 
+    mysql:
+        image: mysql:5.6
+        container_name: db
+        restart: ${RESTART}
+        env_file: ".env"
+        environment: 
+            - MYSQL_DATABASE: ${DATABASE_NAME}
+            - MYSQL_USER: ${USERNAME}
+            - MYSQL_PASSWORD: ${PASSWORD}
+            - MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
+        ports: 
+            - "${MYSQL_PORT}:3306"
+        networks: 
+            ${NETWORK}
+        volumes:
+            - "${MYSQL_DATA_DIRECTORY}:/var/lib/mysql"
+            - "${MYSQL_INIT_DB_DIRECTORY}:/docker-entrypoint-initdb.d"
+            - "${MYSQL_CONF_DIRECTORY}:/etc/mysql/conf.d"
+            - "${MYSQL_LOG_DIRECTORY}:/var/log/mysql"
+    web:
+        image: php:7.4-apache
+        container_name: php_apache
+        restart: ${RESTART}
+        env_file: ".env"
+        ports: 
+            - "${APACHE_PORT}:80"
+        volumes: ../:/var/www/html
